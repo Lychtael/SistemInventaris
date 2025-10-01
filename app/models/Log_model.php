@@ -13,19 +13,20 @@ class Log_model {
             die($e->getMessage());
         }
     }
+        public function catatLog($aksi, $tabel, $keterangan) {
+            $query = "INSERT INTO " . $this->table . " (user_id, aksi, tabel, keterangan) 
+                    VALUES (:user_id, :aksi, :tabel, :keterangan)";
+            
+            $this->stmt = $this->dbh->prepare($query);
+            $this->stmt->bindValue(':user_id', $_SESSION['user_id']);
+            $this->stmt->bindValue(':aksi', $aksi);
+            $this->stmt->bindValue(':tabel', $tabel);
+            $this->stmt->bindValue(':keterangan', $keterangan);
 
-    public function catatLog($aksi, $tabel, $keterangan) {
-        $query = "INSERT INTO " . $this->table . " (user_id, aksi, tabel, keterangan) 
-                  VALUES (:user_id, :aksi, :tabel, :keterangan)";
-        
-        $this->stmt = $this->dbh->prepare($query);
-        $this->stmt->execute([
-            'user_id' => $_SESSION['user_id'], // Ambil dari session
-            'aksi' => $aksi,
-            'tabel' => $tabel,
-            'keterangan' => $keterangan
-        ]);
-    }
+            $this->stmt->execute();
+
+            return $this->stmt->rowCount(); // Mengembalikan jumlah baris yang terpengaruh
+        }
 
     public function getAllLog() {
         $query = "SELECT l.*, u.username 

@@ -9,21 +9,25 @@ class AuthController extends Controller {
     public function prosesLogin() {
         $username = $_POST['username'];
         $password = $_POST['password'];
-
+    
         $user = $this->model('Auth_model')->getUserByUsername($username);
-
+    
         if ($user && password_verify($password, $user['password'])) {
+            // Langkah 1: Simpan data user ke session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['is_login'] = true;
 
-            // Log aktivitas login
+            // Langkah 2: Panggil model log untuk mencatat aktivitas
             $this->model('Log_model')->catatLog('LOGIN', 'auth', 'User ' . $username . ' berhasil login.');
-            Flasher::setFlash('Login Berhasil', 'Selamat datang, ' . $username, 'success');
-
+            
+            // Langkah 3: Beri notifikasi dan arahkan ke dashboard
+            Flasher::setFlash('Login Berhasil', 'Selamat datang, ' . $username . '!', 'success');
+            
             header('Location: ' . BASEURL . '/dashboard');
             exit;
         } else {
+            // Jika login gagal
             Flasher::setFlash('Login Gagal', 'Username atau password salah.', 'danger');
             header('Location: ' . BASEURL . '/auth');
             exit;
@@ -31,11 +35,17 @@ class AuthController extends Controller {
     }
 
     public function logout() {
-        // Log aktivitas logout
-        $this->model('Log_model')->catatLog('LOGOUT', 'auth', 'User ' . $_SESSION['username'] . ' telah logout.');
+        // Pastikan user benar-benar login sebelum mencatat log
+        if (isset($_SESSION['is_login'])) {
+            // Langkah 1: Catat aktivitas logout SEBELUM session dihancurkan
+            $this->model('Log_model')->catatLog('LOGOUT', 'auth', 'User ' . $_SESSION['username'] . ' telah logout.');
+        }
 
+        // Langkah 2: Hancurkan session
         session_destroy();
-        Flasher::setFlash('Logout Berhasil', 'Anda telah berhasil logout.', 'success');
+        
+        // Langkah 3: Beri notifikasi dan arahkan ke halaman login
+        Flasher::setFlash('Logout', 'Anda telah berhasil keluar.', 'success');
         header('Location: ' . BASEURL . '/auth');
         exit;
     }
