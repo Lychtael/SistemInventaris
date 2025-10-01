@@ -28,7 +28,7 @@
                 <td><?= $pinjam['tanggal_kembali'] ? date('d M Y', strtotime($pinjam['tanggal_kembali'])) : '-'; ?></td>
                 <td>
                     <?php if ($pinjam['status'] == 'dipinjam'): ?>
-                        <span class="badge bg-warning text-dark">Dipinjam</span>
+                        <span class="badge bg-danger">Dipinjam</span>
                     <?php else: ?>
                         <span class="badge bg-success">Dikembalikan</span>
                     <?php endif; ?>
