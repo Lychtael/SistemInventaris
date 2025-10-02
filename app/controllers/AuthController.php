@@ -35,7 +35,6 @@ class AuthController extends Controller {
     }
 
     public function logout() {
-        // Pastikan user benar-benar login sebelum mencatat log
         if (isset($_SESSION['is_login'])) {
             // Langkah 1: Catat aktivitas logout SEBELUM session dihancurkan
             $this->model('Log_model')->catatLog('LOGOUT', 'auth', 'User ' . $_SESSION['username'] . ' telah logout.');
