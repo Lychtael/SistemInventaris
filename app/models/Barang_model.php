@@ -214,8 +214,16 @@ class Barang_model {
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function importFromCsv($data) {
-        // Helper untuk mencari ID atau membuat baru
+        // Normalisasi key (biar header CSV "Nama Barang" jadi "nama_barang")
+        $normalized = [];
+        foreach ($data as $key => $value) {
+            $key = strtolower(trim($key));
+            $key = str_replace(' ', '_', $key);
+            $normalized[$key] = $value;
+        }
+    
         $get_or_create_id = function($table, $column, $value) {
+            if (empty($value)) return null; // biar ga error kalau kosong
             $this->stmt = $this->dbh->prepare("SELECT id FROM $table WHERE $column = :value");
             $this->stmt->execute(['value' => $value]);
             $result = $this->stmt->fetch();
@@ -228,23 +236,25 @@ class Barang_model {
             }
         };
     
-        $jenis_id = $get_or_create_id('jenis_barang', 'nama_jenis', $data[3]); // Kolom ke-4
-        $sumber_id = $get_or_create_id('sumber_barang', 'nama_sumber', $data[4]); // Kolom ke-5
+        $jenis_id  = $get_or_create_id('jenis_barang', 'nama_jenis', $normalized['jenis'] ?? null);
+        $sumber_id = $get_or_create_id('sumber_barang', 'nama_sumber', $normalized['sumber'] ?? null);
     
-        // Insert data barang
         $query = "INSERT INTO barang (nama_barang, qty, satuan, jenis_id, sumber_id, keterangan) 
                   VALUES (:nama, :qty, :satuan, :jenis_id, :sumber_id, :ket)";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute([
-            'nama' => $data[0], // Kolom ke-1
-            'qty' => $data[1], // Kolom ke-2
-            'satuan' => $data[2], // Kolom ke-3
+            'nama'     => $normalized['nama_barang'] ?? null,
+            'qty'      => $normalized['kuantitas'] ?? 0,
+            'satuan'   => $normalized['satuan'] ?? null,
             'jenis_id' => $jenis_id,
-            'sumber_id' => $sumber_id,
-            'ket' => $data[5] // Kolom ke-6
+            'sumber_id'=> $sumber_id,
+            'ket'      => $normalized['keterangan'] ?? null
         ]);
+    
         return $this->stmt->rowCount();
     }
+    
+    
     public function cariDataBarang()
     {
         $keyword = $_POST['keyword'];

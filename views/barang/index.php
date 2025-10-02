@@ -6,8 +6,8 @@
 
   <div class="d-flex justify-content-start mb-3">
   <a href="<?= BASEURL; ?>/barang/tambah" class="btn btn-success me-2">Tambah Barang</a>
-  <a href="<?= BASEURL; ?>/barang/exportCsv" class="btn btn-success me-2">Export ke CSV</a>
-    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#importModal">Import dari CSV</button>
+  <a href="<?= BASEURL; ?>/barang/exportCsv" class="btn btn-primary me-2">Export ke CSV</a>
+  <a href="<?= BASEURL; ?>/barang/importCsvForm" class="btn btn-success me-2">Import dari CSV</a>
   </div>
 
   <div class="card mb-3">
