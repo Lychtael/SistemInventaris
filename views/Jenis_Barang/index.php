@@ -2,7 +2,7 @@
     <h3>Data Jenis Barang</h3>
     <?php Flasher::flash(); ?>
     <hr>
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
       Tambah Jenis Barang
     </button>
 

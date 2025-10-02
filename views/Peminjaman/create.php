@@ -2,6 +2,7 @@
     <h3>Catat Peminjaman Baru</h3>
     <hr>
     
+    <?php Flasher::flash(); ?>
     <form action="<?= BASEURL; ?>/peminjaman/store" method="post">
         <div class="mb-3">
             <label for="barang_id" class="form-label">Pilih Barang</label>
