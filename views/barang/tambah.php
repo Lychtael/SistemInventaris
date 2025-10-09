@@ -2,6 +2,8 @@
     <h3>Tambah Barang Baru</h3>
     <hr>
 
+    <?php Flasher::flash(); ?>
+    
     <form action="<?= BASEURL; ?>/barang/store" method="post">
         <div class="mb-3">
             <label for="nama_barang" class="form-label">Nama Barang</label>

@@ -58,7 +58,7 @@
       <tr>
         <th>No</th>
         <th>Nama Barang</th>
-        <th>Qty</th>
+        <th>Jumlah</th>
         <th>Satuan</th>
         <th>Jenis Barang</th>
         <th>Sumber Barang</th>
