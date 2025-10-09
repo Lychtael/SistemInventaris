@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="qty_dipinjam" class="form-label">Jumlah Pinjam</label>
-                <input type="number" class="form-control" id="qty_dipinjam" name="qty_dipinjam" required>
+                <input type="number" class="form-control" id="qty_dipinjam" name="qty_dipinjam" required min="1">
             </div>
             <div class="col-md-6 mb-3">
                 <label for="tanggal_pinjam" class="form-label">Tanggal Pinjam</label>

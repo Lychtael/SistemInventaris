@@ -41,7 +41,7 @@
           <input type="hidden" name="id" id="id">
           <div class="form-group">
             <label for="nama_jenis">Nama Jenis</label>
-            <input type="text" class="form-control" id="nama_jenis" name="nama_jenis">
+            <input type="text" class="form-control" id="nama_jenis" name="nama_jenis" required>
           </div>
         
       </div>

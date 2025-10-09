@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="qty" class="form-label">Kuantitas</label>
-                <input type="number" class="form-control" id="qty" name="qty" required>
+                <input type="number" class="form-control" id="qty" name="qty" required min="1">
             </div>
             <div class="col-md-6 mb-3">
                 <label for="satuan" class="form-label">Satuan (Contoh: Buah, Unit, Set)</label>

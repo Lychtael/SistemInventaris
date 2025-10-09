@@ -17,6 +17,13 @@ class SumberBarangController extends Controller {
     }
 
     public function tambah() {
+        // Validasi server-side
+        if (empty(trim($_POST['nama_sumber']))) {
+            Flasher::setFlash('Gagal', 'Nama sumber barang tidak boleh kosong.', 'danger');
+            header('Location: ' . BASEURL . '/sumberbarang');
+            exit;
+        }
+        
         if ($this->model('SumberBarang_model')->tambahDataSumberBarang($_POST) > 0) {
             $this->model('Log_model')->catatLog('TAMBAH', 'sumber_barang', "Menambah sumber baru: " . htmlspecialchars($_POST['nama_sumber']));
             Flasher::setFlash('Sumber Barang', 'berhasil ditambahkan.', 'success');

@@ -59,6 +59,20 @@ class BarangController extends Controller {
         $this->view('templates/footer');
     }
     public function store() {
+        // Validasi 1: Pastikan kolom wajib tidak kosong
+        if (empty(trim($_POST['nama_barang'])) || empty(trim($_POST['qty'])) || empty(trim($_POST['satuan']))) {
+            Flasher::setFlash('Gagal', 'Data tidak lengkap. Semua kolom wajib diisi.', 'danger');
+            header('Location: ' . BASEURL . '/barang/tambah');
+            exit;
+        }
+
+        // Validasi 2: Kuantitas harus minimal 1
+        if ((int)$_POST['qty'] <= 0) {
+            Flasher::setFlash('Gagal', 'Kuantitas tidak valid. Jumlah minimal adalah 1.', 'danger');
+            header('Location: ' . BASEURL . '/barang/tambah');
+            exit;
+        }
+
         if ($this->model('Barang_model')->tambahDataBarang($_POST) > 0) {
             $this->model('Log_model')->catatLog('TAMBAH', 'barang', "Menambah barang baru: " . htmlspecialchars($_POST['nama_barang']));
             Flasher::setFlash('Data Barang', 'berhasil ditambahkan.', 'success');

@@ -2,6 +2,8 @@
     <h3>Dashboard Inventaris</h3>
     <hr>
     
+    <?php Flasher::flash(); ?>
+    
     <div class="row justify-content-center">
         <div class="col-lg-4 col-md-6 mb-4">
             <div class="card text-white bg-success shadow">

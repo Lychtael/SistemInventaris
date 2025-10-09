@@ -17,6 +17,13 @@ class JenisBarangController extends Controller {
     }
 
     public function tambah() {
+        // Validasi server-side
+        if (empty(trim($_POST['nama_jenis']))) {
+            Flasher::setFlash('Gagal', 'Nama jenis barang tidak boleh kosong.', 'danger');
+            header('Location: ' . BASEURL . '/jenisbarang');
+            exit;
+        }
+
         if ($this->model('JenisBarang_model')->tambahDataJenisBarang($_POST) > 0) {
             $this->model('Log_model')->catatLog('TAMBAH', 'jenis_barang', "Menambah jenis baru: " . htmlspecialchars($_POST['nama_jenis']));
             Flasher::setFlash('Jenis Barang', 'berhasil ditambahkan.', 'success');

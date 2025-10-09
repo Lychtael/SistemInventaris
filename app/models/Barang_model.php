@@ -240,15 +240,15 @@ class Barang_model {
         $sumber_id = $get_or_create_id('sumber_barang', 'nama_sumber', $normalized['sumber'] ?? null);
     
         $query = "INSERT INTO barang (nama_barang, qty, satuan, jenis_id, sumber_id, keterangan) 
-                  VALUES (:nama, :qty, :satuan, :jenis_id, :sumber_id, :ket)";
+        VALUES (:nama, :qty, :satuan, :jenis_id, :sumber_id, :ket)";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute([
-            'nama'     => $normalized['nama_barang'] ?? null,
-            'qty'      => $normalized['kuantitas'] ?? 0,
-            'satuan'   => $normalized['satuan'] ?? null,
-            'jenis_id' => $jenis_id,
-            'sumber_id'=> $sumber_id,
-            'ket'      => $normalized['keterangan'] ?? null
+        'nama'     => $normalized['nama_barang'] ?? null,
+        'qty'      => $normalized['qty'] ?? 0,
+        'satuan'   => $normalized['satuan'] ?? null,
+        'jenis_id' => $jenis_id,
+        'sumber_id'=> $sumber_id,
+        'ket'      => $normalized['keterangan'] ?? null
         ]);
     
         return $this->stmt->rowCount();
