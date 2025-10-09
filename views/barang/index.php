@@ -72,7 +72,7 @@
         <tr>
             <td><?= $no++; ?></td>
             <td><?= htmlspecialchars($brg['nama_barang']); ?></td>
-            <td><?= htmlspecialchars($brg['qty']); ?></td>
+            <td><?= htmlspecialchars($brg['jumlah']); ?></td>
             <td><?= htmlspecialchars($brg['satuan']); ?></td>
             <td><?= htmlspecialchars($brg['nama_jenis'] ?? '-'); ?></td>
             <td><?= htmlspecialchars($brg['nama_sumber'] ?? '-'); ?></td>

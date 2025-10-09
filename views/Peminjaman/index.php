@@ -10,7 +10,7 @@
                 <th>No</th>
                 <th>Nama Barang</th>
                 <th>Peminjam</th>
-                <th>Qty</th>
+                <th>Jumlah</th>
                 <th>Tgl Pinjam</th>
                 <th>Tgl Kembali</th>
                 <th>Status</th>
@@ -23,7 +23,7 @@
                 <td><?= $no++; ?></td>
                 <td><?= $pinjam['nama_barang']; ?></td>
                 <td><?= $pinjam['peminjam']; ?></td>
-                <td><?= $pinjam['qty_dipinjam']; ?></td>
+                <td><?= $pinjam['jumlah_dipinjam']; ?></td>
                 <td><?= date('d M Y', strtotime($pinjam['tanggal_pinjam'])); ?></td>
                 <td><?= $pinjam['tanggal_kembali'] ? date('d M Y', strtotime($pinjam['tanggal_kembali'])) : '-'; ?></td>
                 <td>

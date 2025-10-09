@@ -111,10 +111,10 @@ class Barang_model {
         $this->stmt = $this->dbh->prepare($query);
 
         $this->stmt->bindValue(':nama_barang', $data['nama_barang']);
-        $this->stmt->bindValue(':jumlah', $data['qty']); 
+        $this->stmt->bindValue(':jumlah', $data['jumlah']); // Diubah dari 'qty'
         $this->stmt->bindValue(':satuan', $data['satuan']);
-        $this->stmt->bindValue(':id_jenis', $data['jenis_id']); 
-        $this->stmt->bindValue(':id_sumber', $data['sumber_id']); 
+        $this->stmt->bindValue(':id_jenis', $data['id_jenis']); // Diubah dari 'jenis_id'
+        $this->stmt->bindValue(':id_sumber', $data['id_sumber']); // Diubah dari 'sumber_id'
         $this->stmt->bindValue(':keterangan', $data['keterangan']);
 
         $this->stmt->execute();
@@ -144,10 +144,10 @@ class Barang_model {
         $this->stmt = $this->dbh->prepare($query);
 
         $this->stmt->bindValue(':nama_barang', $data['nama_barang']);
-        $this->stmt->bindValue(':jumlah', $data['qty']); 
+        $this->stmt->bindValue(':jumlah', $data['jumlah']); // Diubah dari 'qty'
         $this->stmt->bindValue(':satuan', $data['satuan']);
-        $this->stmt->bindValue(':id_jenis', $data['jenis_id']); 
-        $this->stmt->bindValue(':id_sumber', $data['sumber_id']); 
+        $this->stmt->bindValue(':id_jenis', $data['id_jenis']); // Diubah dari 'jenis_id'
+        $this->stmt->bindValue(':id_sumber', $data['id_sumber']); // Diubah dari 'sumber_id'
         $this->stmt->bindValue(':keterangan', $data['keterangan']);
         $this->stmt->bindValue(':id', $data['id']);
 
