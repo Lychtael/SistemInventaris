@@ -13,26 +13,27 @@ class Log_model {
             die($e->getMessage());
         }
     }
-        public function catatLog($aksi, $tabel, $keterangan) {
-            $query = "INSERT INTO " . $this->table . " (user_id, aksi, tabel, keterangan) 
-                    VALUES (:user_id, :aksi, :tabel, :keterangan)";
-            
-            $this->stmt = $this->dbh->prepare($query);
-            $this->stmt->bindValue(':user_id', $_SESSION['user_id']);
-            $this->stmt->bindValue(':aksi', $aksi);
-            $this->stmt->bindValue(':tabel', $tabel);
-            $this->stmt->bindValue(':keterangan', $keterangan);
 
-            $this->stmt->execute();
+    public function catatLog($aksi, $tabel, $keterangan) {
+        $query = "INSERT INTO " . $this->table . " (id_pengguna, aksi, tabel, keterangan) 
+                  VALUES (:id_pengguna, :aksi, :tabel, :keterangan)";
+        
+        $this->stmt = $this->dbh->prepare($query);
+        $this->stmt->bindValue(':id_pengguna', $_SESSION['user_id']);
+        $this->stmt->bindValue(':aksi', $aksi);
+        $this->stmt->bindValue(':tabel', $tabel);
+        $this->stmt->bindValue(':keterangan', $keterangan);
 
-            return $this->stmt->rowCount(); // Mengembalikan jumlah baris yang terpengaruh
-        }
+        $this->stmt->execute();
+
+        return $this->stmt->rowCount();
+    }
 
     public function getAllLog() {
-        $query = "SELECT l.*, u.username 
+        $query = "SELECT l.*, p.nama_pengguna 
                   FROM log_aktivitas l 
-                  JOIN users u ON l.user_id = u.id 
-                  ORDER BY l.created_at DESC";
+                  JOIN pengguna p ON l.id_pengguna = p.id 
+                  ORDER BY l.dibuat_pada DESC";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);

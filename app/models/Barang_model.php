@@ -1,7 +1,7 @@
 <?php
 
 class Barang_model {
-    private $dbh; // database handler
+    private $dbh;
     private $stmt;
 
     public function __construct() {
@@ -15,24 +15,26 @@ class Barang_model {
 
     public function getAllBarang($params = [])
     {
+        // Menggunakan nama kolom baru: id_jenis, id_sumber
         $query = "SELECT b.*, j.nama_jenis, s.nama_sumber
                   FROM barang b
-                  LEFT JOIN jenis_barang j ON b.jenis_id = j.id
-                  LEFT JOIN sumber_barang s ON b.sumber_id = s.id";
+                  LEFT JOIN jenis_barang j ON b.id_jenis = j.id
+                  LEFT JOIN sumber_barang s ON b.id_sumber = s.id";
     
         $where = [];
         if (!empty($params['jenis_id'])) {
-            $where[] = "b.jenis_id = :jenis_id";
+            $where[] = "b.id_jenis = :jenis_id";
         }
         if (!empty($params['sumber_id'])) {
-            $where[] = "b.sumber_id = :sumber_id";
+            $where[] = "b.id_sumber = :sumber_id";
         }
         if (!empty($where)) {
             $query .= " WHERE " . implode(" AND ", $where);
         }
         
+        // Menggunakan nama kolom baru untuk sorting: jumlah
         $orderBy = 'b.id DESC';
-        if (!empty($params['sort']) && in_array($params['sort'], ['nama_barang', 'qty'])) {
+        if (!empty($params['sort']) && in_array($params['sort'], ['nama_barang', 'jumlah'])) {
             $direction = (!empty($params['direction']) && in_array(strtoupper($params['direction']), ['ASC', 'DESC'])) ? $params['direction'] : 'ASC';
             $orderBy = "b." . $params['sort'] . " " . $direction;
         }
@@ -59,17 +61,18 @@ class Barang_model {
     
     public function countAllBarang($params = [])
     {
+        // Menggunakan nama kolom baru: id_jenis, id_sumber
         $query = "SELECT COUNT(*) as total
                   FROM barang b
-                  LEFT JOIN jenis_barang j ON b.jenis_id = j.id
-                  LEFT JOIN sumber_barang s ON b.sumber_id = s.id";
+                  LEFT JOIN jenis_barang j ON b.id_jenis = j.id
+                  LEFT JOIN sumber_barang s ON b.id_sumber = s.id";
     
         $where = [];
         if (!empty($params['jenis_id'])) {
-            $where[] = "b.jenis_id = :jenis_id";
+            $where[] = "b.id_jenis = :jenis_id";
         }
         if (!empty($params['sumber_id'])) {
-            $where[] = "b.sumber_id = :sumber_id";
+            $where[] = "b.id_sumber = :sumber_id";
         }
         if (!empty($where)) {
             $query .= " WHERE " . implode(" AND ", $where);
@@ -87,6 +90,7 @@ class Barang_model {
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
+
     public function getAllJenis() {
         $this->stmt = $this->dbh->prepare('SELECT * FROM jenis_barang');
         $this->stmt->execute();
@@ -98,24 +102,26 @@ class Barang_model {
         $this->stmt->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function tambahDataBarang($data)
     {
-        $query = "INSERT INTO barang (nama_barang, qty, satuan, jenis_id, sumber_id, keterangan) 
-                VALUES (:nama_barang, :qty, :satuan, :jenis_id, :sumber_id, :keterangan)";
+        $query = "INSERT INTO barang (nama_barang, jumlah, satuan, id_jenis, id_sumber, keterangan) 
+                VALUES (:nama_barang, :jumlah, :satuan, :id_jenis, :id_sumber, :keterangan)";
 
         $this->stmt = $this->dbh->prepare($query);
 
         $this->stmt->bindValue(':nama_barang', $data['nama_barang']);
-        $this->stmt->bindValue(':qty', $data['qty']);
+        $this->stmt->bindValue(':jumlah', $data['qty']); 
         $this->stmt->bindValue(':satuan', $data['satuan']);
-        $this->stmt->bindValue(':jenis_id', $data['jenis_id']);
-        $this->stmt->bindValue(':sumber_id', $data['sumber_id']);
+        $this->stmt->bindValue(':id_jenis', $data['jenis_id']); 
+        $this->stmt->bindValue(':id_sumber', $data['sumber_id']); 
         $this->stmt->bindValue(':keterangan', $data['keterangan']);
 
         $this->stmt->execute();
 
         return $this->stmt->rowCount();
     }
+
     public function getBarangById($id)
     {
         $this->stmt = $this->dbh->prepare('SELECT * FROM barang WHERE id=:id');
@@ -123,31 +129,33 @@ class Barang_model {
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
+
     public function updateDataBarang($data)
     {
         $query = "UPDATE barang SET 
                     nama_barang = :nama_barang,
-                    qty = :qty,
+                    jumlah = :jumlah,
                     satuan = :satuan,
-                    jenis_id = :jenis_id,
-                    sumber_id = :sumber_id,
+                    id_jenis = :id_jenis,
+                    id_sumber = :id_sumber,
                     keterangan = :keterangan
                 WHERE id = :id";
 
         $this->stmt = $this->dbh->prepare($query);
 
         $this->stmt->bindValue(':nama_barang', $data['nama_barang']);
-        $this->stmt->bindValue(':qty', $data['qty']);
+        $this->stmt->bindValue(':jumlah', $data['qty']); 
         $this->stmt->bindValue(':satuan', $data['satuan']);
-        $this->stmt->bindValue(':jenis_id', $data['jenis_id']);
-        $this->stmt->bindValue(':sumber_id', $data['sumber_id']);
+        $this->stmt->bindValue(':id_jenis', $data['jenis_id']); 
+        $this->stmt->bindValue(':id_sumber', $data['sumber_id']); 
         $this->stmt->bindValue(':keterangan', $data['keterangan']);
-        $this->stmt->bindValue(':id', $data['id']); // ID untuk klausa WHERE
+        $this->stmt->bindValue(':id', $data['id']);
 
         $this->stmt->execute();
 
         return $this->stmt->rowCount();
     }
+
     public function hapusDataBarang($id)
     {
         $query = "DELETE FROM barang WHERE id = :id";
@@ -157,9 +165,9 @@ class Barang_model {
 
         return $this->stmt->rowCount();
     }
+
     public function getTotalBarang()
     {
-        // Menghitung total semua record barang
         $this->stmt = $this->dbh->prepare('SELECT count(*) as total FROM barang');
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
@@ -167,10 +175,9 @@ class Barang_model {
 
     public function getBarangCountByJenis()
     {
-        // Menghitung jumlah barang untuk setiap jenis
         $query = "SELECT j.nama_jenis, COUNT(b.id) as jumlah 
                 FROM barang b 
-                JOIN jenis_barang j ON b.jenis_id = j.id 
+                JOIN jenis_barang j ON b.id_jenis = j.id 
                 GROUP BY j.nama_jenis";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute();
@@ -179,21 +186,21 @@ class Barang_model {
 
     public function getBarangCountBySumber()
     {
-        // Menghitung jumlah barang untuk setiap sumber
         $query = "SELECT s.nama_sumber, COUNT(b.id) as jumlah 
                 FROM barang b 
-                JOIN sumber_barang s ON b.sumber_id = s.id 
+                JOIN sumber_barang s ON b.id_sumber = s.id 
                 GROUP BY s.nama_sumber";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function getDetailBarangById($id)
     {
         $query = "SELECT b.*, j.nama_jenis, s.nama_sumber 
                 FROM barang b
-                LEFT JOIN jenis_barang j ON b.jenis_id = j.id
-                LEFT JOIN sumber_barang s ON b.sumber_id = s.id
+                LEFT JOIN jenis_barang j ON b.id_jenis = j.id
+                LEFT JOIN sumber_barang s ON b.id_sumber = s.id
                 WHERE b.id=:id";
                 
         $this->stmt = $this->dbh->prepare($query);
@@ -201,20 +208,21 @@ class Barang_model {
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
+
     public function getAllBarangWithDetails()
     {
-        $query = "SELECT b.nama_barang, b.qty, b.satuan, j.nama_jenis, s.nama_sumber, b.keterangan 
+        $query = "SELECT b.nama_barang, b.jumlah, b.satuan, j.nama_jenis, s.nama_sumber, b.keterangan 
                 FROM barang b
-                LEFT JOIN jenis_barang j ON b.jenis_id = j.id
-                LEFT JOIN sumber_barang s ON b.sumber_id = s.id
+                LEFT JOIN jenis_barang j ON b.id_jenis = j.id
+                LEFT JOIN sumber_barang s ON b.id_sumber = s.id
                 ORDER BY b.id DESC";
                 
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function importFromCsv($data) {
-        // Normalisasi key (biar header CSV "Nama Barang" jadi "nama_barang")
         $normalized = [];
         foreach ($data as $key => $value) {
             $key = strtolower(trim($key));
@@ -223,7 +231,7 @@ class Barang_model {
         }
     
         $get_or_create_id = function($table, $column, $value) {
-            if (empty($value)) return null; // biar ga error kalau kosong
+            if (empty($value)) return null;
             $this->stmt = $this->dbh->prepare("SELECT id FROM $table WHERE $column = :value");
             $this->stmt->execute(['value' => $value]);
             $result = $this->stmt->fetch();
@@ -239,29 +247,28 @@ class Barang_model {
         $jenis_id  = $get_or_create_id('jenis_barang', 'nama_jenis', $normalized['jenis'] ?? null);
         $sumber_id = $get_or_create_id('sumber_barang', 'nama_sumber', $normalized['sumber'] ?? null);
     
-        $query = "INSERT INTO barang (nama_barang, qty, satuan, jenis_id, sumber_id, keterangan) 
-        VALUES (:nama, :qty, :satuan, :jenis_id, :sumber_id, :ket)";
+        $query = "INSERT INTO barang (nama_barang, jumlah, satuan, id_jenis, id_sumber, keterangan) 
+                  VALUES (:nama, :jumlah, :satuan, :id_jenis, :id_sumber, :ket)";
         $this->stmt = $this->dbh->prepare($query);
         $this->stmt->execute([
-        'nama'     => $normalized['nama_barang'] ?? null,
-        'qty'      => $normalized['qty'] ?? 0,
-        'satuan'   => $normalized['satuan'] ?? null,
-        'jenis_id' => $jenis_id,
-        'sumber_id'=> $sumber_id,
-        'ket'      => $normalized['keterangan'] ?? null
+            'nama'     => $normalized['nama_barang'] ?? null,
+            'jumlah'   => $normalized['qty'] ?? 0,
+            'satuan'   => $normalized['satuan'] ?? null,
+            'id_jenis' => $jenis_id,
+            'id_sumber'=> $sumber_id,
+            'ket'      => $normalized['keterangan'] ?? null
         ]);
     
         return $this->stmt->rowCount();
     }
-    
     
     public function cariDataBarang()
     {
         $keyword = $_POST['keyword'];
         $query = "SELECT b.*, j.nama_jenis, s.nama_sumber
                 FROM barang b
-                LEFT JOIN jenis_barang j ON b.jenis_id = j.id
-                LEFT JOIN sumber_barang s ON b.sumber_id = s.id
+                LEFT JOIN jenis_barang j ON b.id_jenis = j.id
+                LEFT JOIN sumber_barang s ON b.id_sumber = s.id
                 WHERE b.nama_barang LIKE :keyword
                 ORDER BY b.id DESC";
                 
@@ -270,9 +277,10 @@ class Barang_model {
         $this->stmt->execute();
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     public function getZeroStockCount()
     {
-        $this->stmt = $this->dbh->prepare('SELECT COUNT(*) as total FROM barang WHERE qty = 0');
+        $this->stmt = $this->dbh->prepare('SELECT COUNT(*) as total FROM barang WHERE jumlah = 0');
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }

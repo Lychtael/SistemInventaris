@@ -14,8 +14,8 @@ class Auth_model {
     }
 
     public function getUserByUsername($username) {
-        $this->stmt = $this->dbh->prepare('SELECT * FROM users WHERE username = :username');
-        $this->stmt->bindValue(':username', $username);
+        $this->stmt = $this->dbh->prepare('SELECT * FROM pengguna WHERE nama_pengguna = :nama_pengguna');
+        $this->stmt->bindValue(':nama_pengguna', $username);
         $this->stmt->execute();
         return $this->stmt->fetch(PDO::FETCH_ASSOC);
     }
