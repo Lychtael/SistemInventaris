@@ -2,7 +2,7 @@
     <h3>Data Peminjaman</h3>
     <?php Flasher::flash(); ?>
     <hr>
-    <a href="<?= BASEURL; ?>/peminjaman/create" class="btn btn-primary mb-3">Catat Peminjaman Baru</a>
+    <a href="<?= BASEURL; ?>/peminjaman/create" class="btn btn-success mb-3">Catat Peminjaman Baru</a>
 
     <table class="table table-bordered table-striped">
         <thead>
@@ -10,7 +10,7 @@
                 <th>No</th>
                 <th>Nama Barang</th>
                 <th>Peminjam</th>
-                <th>Qty</th>
+                <th>Jumlah</th>
                 <th>Tgl Pinjam</th>
                 <th>Tgl Kembali</th>
                 <th>Status</th>
@@ -23,12 +23,12 @@
                 <td><?= $no++; ?></td>
                 <td><?= $pinjam['nama_barang']; ?></td>
                 <td><?= $pinjam['peminjam']; ?></td>
-                <td><?= $pinjam['qty_dipinjam']; ?></td>
+                <td><?= $pinjam['jumlah_dipinjam']; ?></td>
                 <td><?= date('d M Y', strtotime($pinjam['tanggal_pinjam'])); ?></td>
                 <td><?= $pinjam['tanggal_kembali'] ? date('d M Y', strtotime($pinjam['tanggal_kembali'])) : '-'; ?></td>
                 <td>
                     <?php if ($pinjam['status'] == 'dipinjam'): ?>
-                        <span class="badge bg-warning text-dark">Dipinjam</span>
+                        <span class="badge bg-danger">Dipinjam</span>
                     <?php else: ?>
                         <span class="badge bg-success">Dikembalikan</span>
                     <?php endif; ?>

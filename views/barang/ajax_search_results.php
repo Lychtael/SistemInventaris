@@ -3,7 +3,7 @@
 <tr>
     <td><?= $no++; ?></td>
     <td><?= $brg['nama_barang']; ?></td>
-    <td><?= $brg['qty']; ?></td>
+    <td><?= $brg['jumlah']; ?></td>
     <td><?= $brg['satuan']; ?></td>
     <td><?= $brg['nama_jenis'] ?? '-'; ?></td>
     <td><?= $brg['nama_sumber'] ?? '-'; ?></td>

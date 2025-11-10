@@ -6,7 +6,7 @@
         <div class="card-body">
             <h5 class="card-title"><?= $data['barang']['nama_barang']; ?></h5>
             <p class="card-text">
-                <strong>Kuantitas:</strong> <?= $data['barang']['qty']; ?> <?= $data['barang']['satuan']; ?>
+                <strong>Kuantitas:</strong> <?= $data['barang']['jumlah']; ?> <?= $data['barang']['satuan']; ?>
             </p>
             <p class="card-text">
                 <strong>Jenis Barang:</strong> 
@@ -23,10 +23,9 @@
             </p>
             <p class="card-text">
                 <small class="text-muted">
-                    Data dibuat pada: <?= date('d M Y, H:i', strtotime($data['barang']['created_at'])); ?>
+                    Data dibuat pada: <?= date('d M Y, H:i', strtotime($data['barang']['dibuat_pada'])); ?>
                 </small>
             </p>
-            
             <a href="<?= BASEURL; ?>/barang" class="btn btn-secondary mt-3">Kembali ke Daftar</a>
         </div>
     </div>

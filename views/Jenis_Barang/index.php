@@ -2,7 +2,7 @@
     <h3>Data Jenis Barang</h3>
     <?php Flasher::flash(); ?>
     <hr>
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
       Tambah Jenis Barang
     </button>
 
@@ -41,7 +41,7 @@
           <input type="hidden" name="id" id="id">
           <div class="form-group">
             <label for="nama_jenis">Nama Jenis</label>
-            <input type="text" class="form-control" id="nama_jenis" name="nama_jenis">
+            <input type="text" class="form-control" id="nama_jenis" name="nama_jenis" required>
           </div>
         
       </div>

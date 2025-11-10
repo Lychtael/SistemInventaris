@@ -59,14 +59,30 @@ class BarangController extends Controller {
         $this->view('templates/footer');
     }
     public function store() {
+        // Validasi 1: Menggunakan 'jumlah' bukan 'qty'
+        if (empty(trim($_POST['nama_barang'])) || empty(trim($_POST['jumlah'])) || empty(trim($_POST['satuan']))) {
+            Flasher::setFlash('Gagal', 'Data tidak lengkap. Semua kolom wajib diisi.', 'danger');
+            header('Location: ' . BASEURL . '/barang/tambah');
+            exit;
+        }
+
+        // Validasi 2: Menggunakan 'jumlah' bukan 'qty'
+        if ((int)$_POST['jumlah'] <= 0) {
+            Flasher::setFlash('Gagal', 'Kuantitas tidak valid. Jumlah minimal adalah 1.', 'danger');
+            header('Location: ' . BASEURL . '/barang/tambah');
+            exit;
+        }
+
         if ($this->model('Barang_model')->tambahDataBarang($_POST) > 0) {
             $this->model('Log_model')->catatLog('TAMBAH', 'barang', "Menambah barang baru: " . htmlspecialchars($_POST['nama_barang']));
             Flasher::setFlash('Data Barang', 'berhasil ditambahkan.', 'success');
+            header('Location: ' . BASEURL . '/barang');
+            exit;
         } else {
             Flasher::setFlash('Data Barang', 'gagal ditambahkan.', 'danger');
+            header('Location: ' . BASEURL . '/barang');
+            exit;
         }
-        header('Location: ' . BASEURL . '/barang');
-        exit;
     }
     public function edit($id)
     {
@@ -141,66 +157,129 @@ class BarangController extends Controller {
             header('Location: ' . BASEURL . '/barang');
             exit;
         }
-
+    
         $file = $_FILES['csv_file']['tmp_name'];
         $handle = fopen($file, "r");
-        fgetcsv($handle); // Lewati header
-
+    
+        if ($handle === false) {
+            Flasher::setFlash('Import Gagal', 'Tidak bisa membaca file CSV.', 'danger');
+            header('Location: ' . BASEURL . '/barang');
+            exit;
+        }
+    
+        // --- Ambil header CSV
+        $headers = fgetcsv($handle, 1000, ",");
+        if (!$headers) {
+            Flasher::setFlash('Import Gagal', 'File CSV kosong atau header tidak valid.', 'danger');
+            header('Location: ' . BASEURL . '/barang');
+            exit;
+        }
+    
+        // --- Mapping header agar fleksibel
+        $headerMap = [
+            'nama barang' => 'nama_barang',
+            'nama_barang' => 'nama_barang',
+            'nama'        => 'nama_barang',
+            'qty'         => 'qty',
+            'kuantitas'   => 'qty',
+            'satuan'      => 'satuan',
+            'jenis'       => 'jenis',
+            'kategori'    => 'jenis',
+            'sumber'      => 'sumber',
+            'asal'        => 'sumber',
+            'keterangan'  => 'keterangan',
+            'ket'         => 'keterangan'
+        ];
+    
+        // --- Normalisasi header
+        $normalizedHeaders = [];
+        foreach ($headers as $h) {
+            $key = strtolower(trim($h));
+            $normalizedHeaders[] = $headerMap[$key] ?? $key;
+        }
+    
         $errors = [];
         $dataToImport = [];
         $rowNumber = 1;
-
-        // Definisikan nilai yang diizinkan
-        $allowed_satuan = ['Unit', 'Set', 'Buah'];
-        $allowed_sumber = ['Hibah', 'Beli', 'Sponsor'];
-        $allowed_jenis = ['Alat Tulis Percetakan & Perlengkapan', 'Alat Dapur', 'Perlengkapan Istirahat', 'Elektronik', 'Furniture'];
-
-        // 1. Validasi dengan aturan baru
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+    
+        // --- Definisi nilai yang diizinkan (dibikin lowercase semua biar fleksibel)
+        $allowed_satuan = ['unit', 'set', 'buah'];
+        $allowed_sumber = ['hibah', 'beli', 'sponsor'];
+        $allowed_jenis  = [
+            'alat tulis percetakan & perlengkapan',
+            'alat dapur',
+            'perlengkapan istirahat',
+            'elektronik',
+            'furniture'
+        ];
+    
+        // --- Loop isi CSV
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
             $rowNumber++;
-            if (count($data) != 6) { $errors[] = "Baris #{$rowNumber}: Jumlah kolom tidak sesuai."; continue; }
-        
-            // Aturan untuk Qty
-            if (empty(trim($data[1]))) {
-                $data[1] = 0;
-            } elseif (!ctype_digit(strval($data[1]))) {
-                $errors[] = "Baris #{$rowNumber}: Kuantitas ('{$data[1]}') harus berupa angka bulat.";
+            if (count($row) != count($normalizedHeaders)) {
+                $errors[] = "Baris #{$rowNumber}: Jumlah kolom tidak sesuai.";
+                continue;
             }
-            
-            // Aturan untuk Satuan
-            if (!in_array($data[2], $allowed_satuan)) {
-                $errors[] = "Baris #{$rowNumber}: Satuan ('{$data[2]}') tidak valid. Harus Unit/Set/Buah.";
+    
+            // Buat asosiatif
+            $rowAssoc = array_combine($normalizedHeaders, $row);
+    
+            // Normalisasi isi ke lowercase untuk validasi (tapi simpan versi original)
+            $satuanVal = strtolower(trim($rowAssoc['satuan'] ?? ''));
+            $jenisVal  = strtolower(trim($rowAssoc['jenis'] ?? ''));
+            $sumberVal = strtolower(trim($rowAssoc['sumber'] ?? ''));
+    
+            // Validasi Qty
+            if (empty(trim($rowAssoc['qty'] ?? ''))) {
+                $rowAssoc['qty'] = 0;
+            } elseif (!ctype_digit(strval($rowAssoc['qty']))) {
+                $errors[] = "Baris #{$rowNumber}: Kuantitas ('{$rowAssoc['qty']}') harus angka bulat.";
             }
-        
-            // Aturan untuk Jenis Barang (kolom ke-4, index 3)
-            if (!in_array($data[3], $allowed_jenis)) {
-                $errors[] = "Baris #{$rowNumber}: Jenis Barang ('{$data[3]}') tidak valid.";
+    
+            // Validasi Satuan
+            if (!in_array($satuanVal, $allowed_satuan)) {
+                $errors[] = "Baris #{$rowNumber}: Satuan ('{$rowAssoc['satuan']}') tidak valid.";
             }
-        
-            // Aturan untuk Sumber Barang (kolom ke-5, index 4)
-            if (!in_array($data[4], $allowed_sumber)) {
-                $errors[] = "Baris #{$rowNumber}: Sumber Barang ('{$data[4]}') tidak valid. Harus Hibah/Beli/Sponsor.";
+    
+            // Validasi Jenis
+            if (!in_array($jenisVal, $allowed_jenis)) {
+                $errors[] = "Baris #{$rowNumber}: Jenis Barang ('{$rowAssoc['jenis']}') tidak valid.";
             }
-        
-            $dataToImport[] = $data;
+    
+            // Validasi Sumber
+            if (!in_array($sumberVal, $allowed_sumber)) {
+                $errors[] = "Baris #{$rowNumber}: Sumber Barang ('{$rowAssoc['sumber']}') tidak valid.";
+            }
+    
+            $dataToImport[] = $rowAssoc;
         }
         fclose($handle);
-
-        // 2. Jika ada error, tampilkan di modal
+    
+        // --- Jika ada error
         if (!empty($errors)) {
             $_SESSION['csv_import_errors'] = $errors;
             header('Location: ' . BASEURL . '/barang');
             exit;
         }
-
-        // 3. Jika tidak ada error, import data
-        foreach ($dataToImport as $data) {
-            $this->model('Barang_model')->importFromCsv($data);
+    
+        // --- Import ke DB
+        foreach ($dataToImport as $row) {
+            $this->model('Barang_model')->importFromCsv($row); // sekarang langsung array asosiatif
         }
-
+    
         $this->model('Log_model')->catatLog('IMPORT', 'barang', "Mengimpor data dari file CSV.");
         Flasher::setFlash('Import Berhasil', 'Semua data dari CSV telah ditambahkan.', 'success');
         header('Location: ' . BASEURL . '/barang');
         exit;
     }
+    
+    
+    public function importCsvForm()
+    {
+        $data['judul'] = 'Import Barang dari CSV';
+        $this->view('templates/header', $data);
+        $this->view('barang/import', $data);
+        $this->view('templates/footer');
+    }
+
 }

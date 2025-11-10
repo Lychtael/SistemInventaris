@@ -18,27 +18,40 @@ class PeminjamanController extends Controller {
 
     public function create() {
         $data['judul'] = 'Catat Peminjaman';
-        $data['barang'] = $this->model('Barang_model')->getAllBarang(); // Ambil data barang untuk dropdown
+        $data['barang'] = $this->model('Barang_model')->getAllBarang();
         $this->view('templates/header', $data);
         $this->view('peminjaman/create', $data);
         $this->view('templates/footer');
     }
 
     public function store() {
-        $barang = $this->model('Barang_model')->getBarangById($_POST['barang_id']);
+        if (empty($_POST['id_barang']) || empty(trim($_POST['peminjam'])) || empty(trim($_POST['jumlah_dipinjam']))) {
+            Flasher::setFlash('Gagal', 'Data tidak lengkap. Semua kolom wajib diisi.', 'danger');
+            header('Location: ' . BASEURL . '/peminjaman/create');
+            exit;
+        }
+    
+        $barang = $this->model('Barang_model')->getBarangById($_POST['id_barang']);
+        $jumlah_dipinjam = (int)$_POST['jumlah_dipinjam'];
         
-        if ($barang['qty'] < $_POST['qty_dipinjam']) {
-            Flasher::setFlash('Peminjaman Gagal', 'Stok barang tidak mencukupi.', 'danger');
-            header('Location: ' . BASEURL . '/peminjaman/create'); // Kembali ke form
+        if ($jumlah_dipinjam <= 0) {
+            Flasher::setFlash('Gagal', 'Jumlah pinjam tidak valid.', 'danger');
+            header('Location: ' . BASEURL . '/peminjaman/create');
+            exit;
+        }
+
+        if ($barang['jumlah'] < $jumlah_dipinjam) {
+            Flasher::setFlash('Gagal', 'Stok barang tidak mencukupi.', 'danger');
+            header('Location: ' . BASEURL . '/peminjaman/create');
             exit;
         }
     
         if ($this->model('Peminjaman_model')->tambahDataPeminjaman($_POST) > 0) {
             $keterangan = "Mencatat peminjaman '" . htmlspecialchars($barang['nama_barang']) . "' oleh " . htmlspecialchars($_POST['peminjam']);
             $this->model('Log_model')->catatLog('PINJAM', 'peminjaman', $keterangan);
-            Flasher::setFlash('Peminjaman', 'berhasil dicatat.', 'success');
+            Flasher::setFlash('Data Peminjaman', 'berhasil dicatat.', 'success');
         } else {
-            Flasher::setFlash('Peminjaman', 'gagal dicatat.', 'danger');
+            Flasher::setFlash('Data Peminjaman', 'gagal dicatat.', 'danger');
         }
         header('Location: ' . BASEURL . '/peminjaman');
         exit;
@@ -46,14 +59,14 @@ class PeminjamanController extends Controller {
     
     public function kembali($id) {
         $peminjaman = $this->model('Peminjaman_model')->getPeminjamanById($id);
-        $barang = $this->model('Barang_model')->getBarangById($peminjaman['barang_id']);
+        $barang = $this->model('Barang_model')->getBarangById($peminjaman['id_barang']);
     
         if ($this->model('Peminjaman_model')->kembalikanBarang($id) > 0) {
             $keterangan = "Mencatat pengembalian '" . htmlspecialchars($barang['nama_barang']) . "' oleh " . htmlspecialchars($peminjaman['peminjam']);
             $this->model('Log_model')->catatLog('KEMBALI', 'peminjaman', $keterangan);
-            Flasher::setFlash('Pengembalian', 'berhasil dicatat.', 'success');
+            Flasher::setFlash('Data Pengembalian', 'berhasil dicatat.', 'success');
         } else {
-            Flasher::setFlash('Pengembalian', 'gagal dicatat.', 'danger');
+            Flasher::setFlash('Data Pengembalian', 'gagal dicatat.', 'danger');
         }
         header('Location: ' . BASEURL . '/peminjaman');
         exit;

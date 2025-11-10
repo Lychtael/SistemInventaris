@@ -1,7 +1,7 @@
 <div class="container mt-4">
     <h3>Edit Data Barang</h3>
     <hr>
-    
+
     <form action="<?= BASEURL; ?>/barang/update" method="post">
         <input type="hidden" name="id" value="<?= $data['barang']['id']; ?>">
 
@@ -11,8 +11,8 @@
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label for="qty" class="form-label">Kuantitas</label>
-                <input type="number" class="form-control" id="qty" name="qty" value="<?= $data['barang']['qty']; ?>" required>
+                <label for="jumlah" class="form-label">Kuantitas</label>
+                <input type="number" class="form-control" id="jumlah" name="jumlah" value="<?= $data['barang']['jumlah']; ?>" required>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="satuan" class="form-label">Satuan (Contoh: Buah, Unit, Set)</label>
@@ -20,20 +20,20 @@
             </div>
         </div>
         <div class="mb-3">
-            <label for="jenis_id" class="form-label">Jenis Barang</label>
-            <select class="form-select" id="jenis_id" name="jenis_id">
+            <label for="id_jenis" class="form-label">Jenis Barang</label>
+            <select class="form-select" id="id_jenis" name="id_jenis">
                 <?php foreach ($data['jenis'] as $jenis) : ?>
-                    <option value="<?= $jenis['id']; ?>" <?= ($data['barang']['jenis_id'] == $jenis['id']) ? 'selected' : ''; ?>>
+                    <option value="<?= $jenis['id']; ?>" <?= ($data['barang']['id_jenis'] == $jenis['id']) ? 'selected' : ''; ?>>
                         <?= $jenis['nama_jenis']; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
         <div class="mb-3">
-            <label for="sumber_id" class="form-label">Sumber Barang</label>
-            <select class="form-select" id="sumber_id" name="sumber_id">
+            <label for="id_sumber" class="form-label">Sumber Barang</label>
+            <select class="form-select" id="id_sumber" name="id_sumber">
                 <?php foreach ($data['sumber'] as $sumber) : ?>
-                    <option value="<?= $sumber['id']; ?>" <?= ($data['barang']['sumber_id'] == $sumber['id']) ? 'selected' : ''; ?>>
+                    <option value="<?= $sumber['id']; ?>" <?= ($data['barang']['id_sumber'] == $sumber['id']) ? 'selected' : ''; ?>>
                         <?= $sumber['nama_sumber']; ?>
                     </option>
                 <?php endforeach; ?>

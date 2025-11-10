@@ -15,8 +15,8 @@
         <tbody>
             <?php foreach($data['log'] as $log) : ?>
             <tr>
-                <td><?= date('d M Y, H:i:s', strtotime($log['created_at'])); ?></td>
-                <td><?= htmlspecialchars($log['username']); ?></td>
+                <td><?= date('d M Y, H:i:s', strtotime($log['dibuat_pada'])); ?></td>
+                <td><?= htmlspecialchars($log['nama_pengguna']); ?></td>
                 <td><span class="badge bg-info text-dark"><?= htmlspecialchars($log['aksi']); ?></span></td>
                 <td><?= htmlspecialchars($log['tabel']); ?></td>
                 <td><?= htmlspecialchars($log['keterangan']); ?></td>

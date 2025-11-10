@@ -2,7 +2,7 @@
     <h3>Data Sumber Barang</h3>
     <?php Flasher::flash(); ?>
     <hr>
-    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
+    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#formModal">
       Tambah Sumber Barang
     </button>
 
@@ -41,7 +41,7 @@
           <input type="hidden" name="id" id="id">
           <div class="form-group">
             <label for="nama_sumber">Nama Sumber</label>
-            <input type="text" class="form-control" id="nama_sumber" name="nama_sumber">
+            <input type="text" class="form-control" id="nama_sumber" name="nama_sumber" required>
           </div>
         
       </div>
